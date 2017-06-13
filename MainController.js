@@ -109,6 +109,7 @@ $scope.UpdateGetBack = function(product){
   product.price = product.old_values.price;
   product.seller = product.old_values.seller;
   product.location = product.old_values.location;
+  product.selected = false;
   $scope.status = 'list';
 };
 $scope.Create = function(){
