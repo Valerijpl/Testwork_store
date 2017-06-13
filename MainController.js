@@ -115,23 +115,9 @@ $scope.Create = function(){
   $scope.status = 'create';
 };
 $scope.create_new_product = function(product){
-  var today = new Date();
-  var dd = today.getDate();
-  var mm = today.getMonth()+1; //January is 0!
-  var yyyy = today.getFullYear();
-
-  if(dd<10) {
-      dd='0'+dd
-  }
-
-  if(mm<10) {
-      mm='0'+mm
-  }
-
-  today = (dd, mm, yyyy);
   var product = {
       name: product.name,
-      pubdate: new Date(today),
+      pubdate: new Date().toLocaleDateString(),
       price: product.price,
       id: $scope.products.length + 1,
       image_url: product.image_url,
@@ -145,3 +131,4 @@ $scope.create_new_product = function(product){
   $scope.status = 'list';
 };
 }]);
+
