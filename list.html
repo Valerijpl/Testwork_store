@@ -1,0 +1,213 @@
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.js"></script>
+  <script src="app.js"></script>
+  <script src="MainController.js"></script>
+  <script src="Script.js"></script>
+  <link href="main.css" rel="stylesheet" />
+</head>
+<body>
+  <body ng-app="myApp">
+   <div class="header">
+   </div>
+     <div class="container">
+       <h1>My personal store</h1>
+     </div>
+   </div>
+
+   <div class="main" ng-controller="MainController">
+    <div class="container">
+      <h1>{{ title }}</h1>
+      <h2>{{ promo }}<button class="btn btn-primary" style="float: right;margin-right: 20px" ng-click="Create()">Add new item</button></h2>
+
+
+     <div ng-repeat="product in products" ng-if="status == 'list'" class="col-md-6">
+      <div class="thumbnail">
+        <div class="container">
+        <a class="title">{{ product.name }}</a>
+        <img class="img-responsive col-md-1" src="{{product.image_url}}">
+        <p class="date">{{ product.pubdate | date }}</p>
+        <button class="btn btn-primary" style="float:left;margin-top: 10px" ng-click="ShowInfo(product)">Show more</button>
+        <button class="btn btn-primary" style="float:left;margin-top: 10px; margin-left: 10px" ng-click="UpdateSectionMoveTo(product)">Update</button>
+        <div class="rating">
+       <p class="price" ng-click="plusOne($index)"> {{ product.price }} $</p>
+      </div>
+    </div>
+
+    </div>
+
+  </div>
+  <div class="alert alert-success" role="alert" ng-if="status == 'deleted'">
+    <strong>Well done!</strong><h5>You successfuly removed product
+    <button class="btn btn-primary" style="float: right;margin-bottom: 30px" ng-click="GetBackMain()">Get back</button></h5>
+  </div>
+  <div ng-repeat="product in products" ng-show="product.selected == true" ng-if="status == 'view'" class="col-md-8 col-md-offset-2">
+    <div class="alert alert-danger" role="alert" ng-show="product.alertDanger == 'show'" style="margin-bottom: 50px">
+    <strong>warning !</strong><h5> Are you sure that you want to remove product {{ product.name }} ?
+       <button class="btn btn-primary" style="float:right; margin-bottom: 30px; margin-left: 10px" ng-click="canselRemove(product)">Cansel</button>
+      <button class="btn btn-primary" style="float:right; margin-bottom: 30px; margin-left: 10px" ng-click="RemoveProduct(product)">Remove</button></h5>
+
+    </div>
+   <div class="thumbnail">
+     <div class="container">
+     <img class="img-responsive img-thumbnail" style="height:400px" src="{{product.image_url}}">
+     <a class="title" style="display: block">{{ product.name }}</a>
+     <p>Product ID:{{ product.id }}</p>
+     <p>Location of store:{{ product.location }}</p>
+     <p>By:{{ product.seller }}</p>
+     <p class="date">{{ product.pubdate | date }}</p>
+     <button class="btn btn-danger" style="float:left;margin-top: 10px" ng-click="RemoveAction(product)">Remove</button>
+     <button class="btn btn-primary" style="float:left;margin-top: 10px; margin-left: 10px" ng-click="GetBack(product)">Get back</button>
+     <div class="rating">
+    <p class="price" ng-click="plusOne($index)"> {{ product.price }} $</p>
+   </div>
+ </div>
+
+ </div>
+
+</div>
+<div ng-if="status == 'create'" class="col-md-8 col-md-offset-2">
+ <div class="thumbnail">
+   <form name="create_form"  class="visible-md visible-lg" ng-submit="create_new_product(product)">
+   <div class="container">
+     <div class="panel-body col-md-12">
+     <div class="form-group" style="width: 50%">
+      <label style="display: block" for="name">Name</label>
+      <input style="display: block" type="text" class="form-control" ng-value="product.name" ng-model="product.name" required>
+    </div>
+    <div class="form-group" style="width: 50%">
+     <label style="display: block" for="price">Price</label>
+     <input style="display: block" type="text" class="form-control" ng-value="product.price" ng-model="product.price" required>
+   </div>
+   <div class="form-group" style="width: 50%">
+    <label style="display: block" for="seller">Seller</label>
+    <input style="display: block" type="text" class="form-control" ng-value="product.seller" ng-model="product.seller" required>
+  </div>
+  <div class="form-group" style="width: 50%">
+   <label style="display: block" for="location">Location</label>
+   <input style="display: block" type="text" class="form-control" ng-model="product.location" ng-value="product.location" required>
+ </div>
+ <div class="form-group" style="width: 50%">
+  <label style="display: block" for="image">Image</label>
+  <img class="img-responsive img-thumbnail" style="height: 175px" ng-show="product.image_url != ''" src="{{product.image_url}}">
+  <input style="display: block" type="url" class="form-control" align="left" ng-model="product.image_url" placeholder="enter your image URL here" required>
+</div>
+<button class="btn btn-primary" style="float:left;margin-top: 10px" ng-disabled="create_form.$invalid" type="submit">Create</button>
+<button class="btn btn-primary" style="float:left;margin-top: 10px;margin-left: 10px" ng-click="GetBackMain()">Get back</button>
+</div>
+</div>
+</form>
+<form name="create_form"  class="visible-xs visible-sm" ng-submit="create_new_product(product)">
+<div class="container">
+  <div class="panel-body col-md-12">
+  <div class="form-group" style="width: 85%">
+   <label style="display: block" for="name">Name</label>
+   <input style="display: block" type="text" class="form-control" ng-value="product.name" ng-model="product.name" required>
+ </div>
+ <div class="form-group" style="width: 85%">
+  <label style="display: block" for="price">Price</label>
+  <input style="display: block" type="text" class="form-control" ng-value="product.price" ng-model="product.price" required>
+</div>
+<div class="form-group" style="width: 85%">
+ <label style="display: block" for="seller">Seller</label>
+ <input style="display: block" type="text" class="form-control" ng-value="product.seller" ng-model="product.seller" required>
+</div>
+<div class="form-group" style="width: 85%">
+<label style="display: block" for="location">Location</label>
+<input style="display: block" type="text" class="form-control" ng-model="product.location" ng-value="product.location" required>
+</div>
+<div class="form-group" style="width: 85%">
+<label style="display: block" for="image">Image</label>
+<img class="img-responsive img-thumbnail" style="height: 175px" ng-show="product.image_url != ''" src="{{product.image_url}}">
+<input style="display: block" type="url" class="form-control" align="left" ng-model="product.image_url" placeholder="enter your image URL here" required>
+</div>
+<button class="btn btn-primary" style="float:left;margin-top: 10px" ng-disabled="create_form.$invalid" type="submit">Create</button>
+<button class="btn btn-primary" style="float:left;margin-top: 10px;margin-left: 10px" ng-click="GetBackMain()">Get back</button>
+</div>
+</div>
+</form>
+
+</div>
+
+</div>
+<div ng-repeat="product in products" ng-show="product.selected == true" ng-if="status == 'update'" class="col-md-8 col-md-offset-2">
+ <div class="thumbnail">
+   <form name="update_form" class="visible-md visible-lg" ng-submit="Update(product)">
+   <div class="container">
+     <div class="panel-body col-md-12">
+       <div class="form-group" style="width: 50%">
+        <label style="display: block" for="name">Name</label>
+        <input style="display: block" type="text" class="form-control" ng-value="product.name" ng-model="product.name" required>
+      </div>
+      <div class="form-group" style="width: 50%">
+       <label style="display: block" for="price">Price</label>
+       <input style="display: block" type="text" class="form-control" ng-value="product.price" ng-model="product.price" required>
+     </div>
+     <div class="form-group" style="width: 50%">
+      <label style="display: block" for="seller">Seller</label>
+      <input style="display: block" type="text" class="form-control" ng-value="product.seller" ng-model="product.seller" required>
+    </div>
+    <div class="form-group" style="width: 50%">
+     <label style="display: block" for="location">Location</label>
+     <input style="display: block" type="text" class="form-control" ng-model="product.location" ng-value="product.location" required>
+   </div>
+   <div class="form-group" style="width: 50%">
+    <label style="display: block" for="image">Image</label>
+    <img class="img-responsive img-thumbnail" style="height: 175px" ng-show="product.image_url != ''" src="{{product.image_url}}">
+    <input style="display: block" type="url" class="form-control" align="left" ng-model="product.image_url" placeholder="enter your image URL here" required>
+  </div>
+      <button class="btn btn-primary" style="float:left;margin-top: 10px" ng-disabled="update_form.$invalid" type="submit">Update</button>
+      <button class="btn btn-primary" ng-click="UpdateGetBack(product)" style="float:left;margin-top: 10px;margin-left: 10px" type="submit">Get back</button>
+</div>
+</div>
+</form>
+<form name="update_form" class="visible-xs visible-sm" ng-submit="Update(product)">
+<div class="container">
+  <div class="panel-body col-md-12">
+    <div class="form-group" style="width: 85%">
+     <label style="display: block" for="name">Name</label>
+     <input style="display: block" type="text" class="form-control" ng-value="product.name" ng-model="product.name" required>
+   </div>
+   <div class="form-group" style="width: 85%">
+    <label style="display: block" for="price">Price</label>
+    <input style="display: block" type="text" class="form-control" ng-value="product.price" ng-model="product.price" required>
+  </div>
+  <div class="form-group" style="width: 85%">
+   <label style="display: block" for="seller">Seller</label>
+   <input style="display: block" type="text" class="form-control" ng-value="product.seller" ng-model="product.seller" required>
+ </div>
+ <div class="form-group" style="width: 85%">
+  <label style="display: block" for="location">Location</label>
+  <input style="display: block" type="text" class="form-control" ng-model="product.location" ng-value="product.location" required>
+</div>
+<div class="form-group" style="width: 85%">
+ <label style="display: block" for="image">Image</label>
+ <img class="img-responsive img-thumbnail" style="height: 175px" ng-show="product.image_url != ''" src="{{product.image_url}}">
+ <input style="display: block" type="url" class="form-control" align="left" ng-model="product.image_url" placeholder="enter your image URL here" required>
+</div>
+   <button class="btn btn-primary" style="float:left;margin-top: 10px" ng-disabled="update_form.$invalid" type="submit">Update</button>
+   <button class="btn btn-primary" ng-click="UpdateGetBack(product)" style="float:left;margin-top: 10px;margin-left: 10px" type="submit">Get back</button>
+</div>
+</div>
+</form>
+
+
+</div>
+
+</div>
+
+  </div>
+
+  </div>
+
+
+   <div class="footer">
+     <div class="container">
+     </div>
+   </div>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
+</body>
+</html>
